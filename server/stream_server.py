@@ -35,5 +35,5 @@ def stream():
 def index():
     return render_template('index.html')
 
-# Start the server
-app.run(host='0.0.0.0', port=5050)
+# Start the server (threaded=True lets the Pi upload and the browser stream at the same time)
+app.run(host='0.0.0.0', port=5050, threaded=True)
