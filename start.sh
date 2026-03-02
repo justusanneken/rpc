@@ -6,7 +6,7 @@
 # --------------------------------------------
 
 echo "Installing server dependencies..."
-pip install flask
+pip install flask opencv-python
 
 echo ""
 echo "Starting the server on http://localhost:5050"
