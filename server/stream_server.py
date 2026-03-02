@@ -11,30 +11,35 @@ app = Flask(__name__)
 
 # Shared variables
 latest_photo = None
-person_detected = False
+motion_detected = False
+previous_frame = None
 
-# Set up the person detector (built into OpenCV, no extra files needed)
-detector = cv2.HOGDescriptor()
-detector.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-
-# This runs in the background and checks the latest photo for people
+# This runs in the background and checks for motion between frames
 def detection_loop():
-    global person_detected
+    global motion_detected, previous_frame
     while True:
         frame_data = latest_photo
         if frame_data:
             image_data = np.frombuffer(frame_data, dtype=np.uint8)
             frame = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
             if frame is not None:
-                # Detect people — padding and smaller winStride make it more sensitive
-                people, _ = detector.detectMultiScale(
-                    frame,
-                    winStride=(4, 4),
-                    padding=(8, 8),
-                    scale=1.05
-                )
-                person_detected = len(people) > 0
-        time.sleep(0.5)  # check twice per second
+                # Convert to greyscale and blur to reduce noise
+                grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                grey = cv2.GaussianBlur(grey, (21, 21), 0)
+
+                if previous_frame is None:
+                    previous_frame = grey
+                else:
+                    # Compare current frame to previous frame
+                    diff = cv2.absdiff(previous_frame, grey)
+                    # Anything that changed a lot becomes white, rest is black
+                    _, thresh = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)
+                    # Count how many pixels changed
+                    changed_pixels = cv2.countNonZero(thresh)
+                    # If enough pixels changed, something moved
+                    motion_detected = changed_pixels > 3000
+                    previous_frame = grey
+        time.sleep(0.2)
 
 # Start the detection thread
 threading.Thread(target=detection_loop, daemon=True).start()
@@ -46,10 +51,10 @@ def upload():
     latest_photo = request.data
     return "OK", 200
 
-# The webpage asks this to know if a person is detected
+# The webpage asks this to know if motion is detected
 @app.route('/status')
 def status():
-    return jsonify({"person": person_detected})
+    return jsonify({"motion": motion_detected})
 
 # The browser calls this to get a live stream of photos
 @app.route('/stream')

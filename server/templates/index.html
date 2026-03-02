@@ -34,7 +34,7 @@
 <body>
     <h1>Raspberry Pi Live Camera</h1>
 
-    <div id="alert">⚠ Person!!</div>
+    <div id="alert">⚠ Motion Detected!!</div>
 
     <!-- This image tag keeps refreshing with new frames from the Pi -->
     <br/>
@@ -47,7 +47,7 @@
                 .then(function(response) { return response.json(); })
                 .then(function(data) {
                     var alert = document.getElementById('alert');
-                    if (data.person) {
+                    if (data.motion) {
                         alert.style.visibility = 'visible';
                     } else {
                         alert.style.visibility = 'hidden';
