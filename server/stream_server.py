@@ -26,9 +26,13 @@ def detection_loop():
             image_data = np.frombuffer(frame_data, dtype=np.uint8)
             frame = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
             if frame is not None:
-                # Resize small for speed
-                small = cv2.resize(frame, (320, 240))
-                people, _ = detector.detectMultiScale(small, winStride=(8, 8), scale=1.05)
+                # Detect people — padding and smaller winStride make it more sensitive
+                people, _ = detector.detectMultiScale(
+                    frame,
+                    winStride=(4, 4),
+                    padding=(8, 8),
+                    scale=1.05
+                )
                 person_detected = len(people) > 0
         time.sleep(0.5)  # check twice per second
 
