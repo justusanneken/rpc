@@ -2,6 +2,7 @@
 # It receives photos from the Pi and shows them on a webpage
 
 from flask import Flask, Response, render_template, request
+import time
 
 app = Flask(__name__)
 
@@ -24,6 +25,8 @@ def stream():
                 # Send the photo in a format browsers understand as a video stream
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + latest_photo + b'\r\n')
+            # Wait a little before sending the next frame (30fps max)
+            time.sleep(0.03)
 
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
