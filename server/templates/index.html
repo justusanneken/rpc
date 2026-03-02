@@ -3,7 +3,6 @@
 <head>
     <title>Pi Camera</title>
     <style>
-        /* Dark background, everything centered */
         body {
             background-color: black;
             color: white;
@@ -16,12 +15,45 @@
             width: 800px;
             border: 2px solid gray;
         }
+
+        /* The red alert box — hidden by default */
+        #alert {
+            display: none;
+            background-color: red;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 14px 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: inline-block;
+            visibility: hidden;
+        }
     </style>
 </head>
 <body>
     <h1>Raspberry Pi Live Camera</h1>
 
+    <div id="alert">⚠ Person!!</div>
+
     <!-- This image tag keeps refreshing with new frames from the Pi -->
+    <br/>
     <img src="/stream" />
+
+    <script>
+        // Ask the server every second if a person is detected
+        setInterval(function() {
+            fetch('/status')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var alert = document.getElementById('alert');
+                    if (data.person) {
+                        alert.style.visibility = 'visible';
+                    } else {
+                        alert.style.visibility = 'hidden';
+                    }
+                });
+        }, 1000);
+    </script>
 </body>
 </html>
