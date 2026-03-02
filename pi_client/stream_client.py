@@ -20,6 +20,11 @@ while True:
     # Grab a single photo from the camera
     frame = camera.capture_array()
 
+    # NoIR fix: the camera has no IR filter so colours look pinkish/purple
+    # Split into colour channels and swap red and blue to correct it
+    b, g, r = cv2.split(frame)
+    frame = cv2.merge([r, g, b])   # swap red and blue channels
+
     # Turn the photo into a JPEG so it's small enough to send fast
     success, jpeg = cv2.imencode('.jpg', frame)
 
