@@ -6,7 +6,7 @@ import requests   # used to send data over the internet
 import time       # used to wait a bit if something goes wrong
 
 # Change this to the IP address of your server
-SERVER_URL = "http://YOUR_SERVER_IP:5050/upload"
+SERVER_URL = "http://10.0.0.8:5050/upload"
 
 # Open the camera (0 = first camera connected)
 camera = cv2.VideoCapture(0)
