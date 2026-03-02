@@ -20,10 +20,12 @@ while True:
     # Grab a single photo from the camera
     frame = camera.capture_array()
 
-    # NoIR fix: the camera has no IR filter so colours look pinkish/purple
-    # Split into colour channels and swap red and blue to correct it
+    # picamera2 gives us a 4-channel image, drop the extra channel
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+
+    # NoIR fix: swap red and blue channels to correct the pink/IR tint
     b, g, r = cv2.split(frame)
-    frame = cv2.merge([r, g, b])   # swap red and blue channels
+    frame = cv2.merge([r, g, b])
 
     # Turn the photo into a JPEG so it's small enough to send fast
     success, jpeg = cv2.imencode('.jpg', frame)
