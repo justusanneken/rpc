@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pi Camera</title>
+    <style>
+        /* Dark background, everything centered */
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding-top: 40px;
+        }
+
+        img {
+            width: 800px;
+            border: 2px solid gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Raspberry Pi Live Camera</h1>
+
+    <!-- This image tag keeps refreshing with new frames from the Pi -->
+    <img src="/stream" />
+</body>
+</html>
