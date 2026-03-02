@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # --------------------------------------------
-# Setup and start the Pi camera stream server
+# Setup and start the Pi camera stream SERVER
+# Run this on your Mac or PC (not the Pi)
 # --------------------------------------------
 
 echo "Installing server dependencies..."
