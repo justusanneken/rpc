@@ -1,41 +1,38 @@
-# This script runs on the Raspberry Pi
-# It captures frames from the camera and sends them to the server
+from picamera2 import Picamera2  
+import requests                  
+import time                      
+import cv2                       
 
-from picamera2 import Picamera2  # built-in Pi camera library
-import requests                  # used to send data over the internet
-import time                      # used to wait if something goes wrong
-import cv2                       # used to convert the frame to JPEG
-
-# Change this to the IP address of your server
+# Server IP
 SERVER_URL = "http://10.0.0.8:5050/upload"
 
-# Set up the camera
+# Camera Einstellen
 camera = Picamera2()
 camera.configure(camera.create_preview_configuration())
 camera.start()
 
-print("Starting stream... press Ctrl+C to stop")
+print("Stream gestartet!")
 
 while True:
-    # Grab a single photo from the camera
+    # Foto machen
     frame = camera.capture_array()
 
-    # picamera2 gives us a 4-channel image, drop the extra channel
+    # da die Kamera auch IR aufnimmt also 4ch hat, wird der nicht benötigte kanal gedroppt.
     frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
 
-    # NoIR fix: swap red and blue channels to correct the pink/IR tint
+    # da die Kamera auch IR aufnimmt werden die Farben Rot und Blau gewechselt um ein natürlicheres bild auszugeben
     b, g, r = cv2.split(frame)
     frame = cv2.merge([r, g, b])
 
-    # Turn the photo into a JPEG so it's small enough to send fast
+    # Foto convertierung zu jpeg
     success, jpeg = cv2.imencode('.jpg', frame)
 
     if not success:
-        print("Couldn't encode frame, trying again...")
+        print("Frame konnte nicht konvertiert werden...")
         time.sleep(1)
         continue
 
-    # Send the photo to the server
+    # Foto zum server schicken
     try:
         requests.post(SERVER_URL, data=jpeg.tobytes(), headers={"Content-Type": "image/jpeg"}, timeout=2)
     except:
