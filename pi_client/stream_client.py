@@ -24,6 +24,9 @@ while True:
     b, g, r = cv2.split(frame)
     frame = cv2.merge([r, g, b])
 
+    # Bild um 180 Grad drehen
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
+
     # Foto convertierung zu jpeg
     success, jpeg = cv2.imencode('.jpg', frame)
 
