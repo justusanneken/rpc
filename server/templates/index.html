@@ -16,7 +16,7 @@
             border: 2px solid gray;
         }
 
-        /* The red alert box — hidden by default */
+        /*Rote Box*/
         #alert {
             display: none;
             background-color: red;
@@ -33,14 +33,14 @@
 </head>
 <body>
 
-    <div id="alert">⚠ Motion Detected!!</div>
+    <div id="alert">⚠ Bewegung erkannt!!</div>
 
-    <!-- This image tag keeps refreshing with new frames from the Pi -->
+    
     <br/>
     <img src="/stream" />
 
     <script>
-        // Ask the server every second if a person is detected
+        //Bewegungserkennungs Abfrage
         setInterval(function() {
             fetch('/status')
                 .then(function(response) { return response.json(); })
