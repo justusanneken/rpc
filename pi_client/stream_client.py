@@ -3,8 +3,10 @@ import requests
 import time                      
 import cv2                       
 
-# Server IP
-SERVER_URL = "http://10.0.0.8:5050/upload"
+# Server IPs
+SERVER_URLS = [
+    "http://10.0.0.8:5050/upload",  # main server
+]
 
 # Camera Einstellen
 camera = Picamera2()
@@ -36,8 +38,8 @@ while True:
         continue
 
     # Foto zum server schicken
-    try:
-        requests.post(SERVER_URL, data=jpeg.tobytes(), headers={"Content-Type": "image/jpeg"}, timeout=2)
-    except:
-        print("Couldn't reach server, trying again...")
-        time.sleep(1)
+    for url in SERVER_URLS:
+        try:
+            requests.post(url, data=jpeg.tobytes(), headers={"Content-Type": "image/jpeg"}, timeout=2)
+        except:
+            print(f"Couldn't reach {url}, skipping...")
